@@ -1,4 +1,4 @@
-function [ x, ex ] =  DampedNewton( ObjFun,Point,Step,MaxIter,RuleMin,varargin)
+function [ x, ex ] =  DampedNewton( ObjFun,x0,Step,maxiter,RuleMin,varargin)
 %
 % NEWTON Newton's Method
 %   Newton's method for finding successively better approximations to the 
@@ -22,11 +22,11 @@ function [ x, ex ] =  DampedNewton( ObjFun,Point,Step,MaxIter,RuleMin,varargin)
 % Coder:    Chujing Tan
 
     if isempty(Step)
-        Step = zeros(size(Point));
+        Step = zeros(size(x0));
     end
     
     k=0;
-    x=Point;
+    x=x0;
     if strcmp(ObjFun,'Penalty')
         gamma = 10^-5;
         func = @(x,gamma)gamma*sum((x-1)^2)+(sum(x.*x)-1/4)^2;
@@ -39,7 +39,7 @@ function [ x, ex ] =  DampedNewton( ObjFun,Point,Step,MaxIter,RuleMin,varargin)
             %此处输出k/x/f/g 确定一个好看的格式
             perStepPrinf(k,x,f,g);
             k=k+1;
-            if k >MaxIter
+            if k >maxiter
                 info('k>MaxxIter');
                 break
             end
