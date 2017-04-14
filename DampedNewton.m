@@ -24,12 +24,13 @@ function [ x, ex ] =  DampedNewton( ObjFun,x0,Step,maxiter,RuleMin,varargin)
     if isempty(Step)
         Step = zeros(size(x0));
     end
-    
+    [n,t] = size(x0);
     k=0;
-    x=x0;
+    syms x;
+    x = x0;
     if strcmp(ObjFun,'Penalty')
         gamma = 10^-5;
-        func = @(x,gamma)gamma*sum((x-1)^2)+(sum(x.*x)-1/4)^2;
+        func = @(x,gamma) gamma*sum((x-1)^2)+(sum(x.*x)-1/4)^2;
         g = gPenalty(x, gamma);
         while norm(g)>=RuleMin
             f = func(x,gamma);
@@ -46,21 +47,17 @@ function [ x, ex ] =  DampedNewton( ObjFun,x0,Step,maxiter,RuleMin,varargin)
             g = gPenalty(x, gamma);
         end            
     elseif strcmp(ObjFun,'Chebyquad')
+        j=1; %xµÄÏÂ±ê
+        f =0;
+        while j<=n         
+            f = f + ChebyshevX(j,x,
+        end
         
         
     elseif strcmp(ObjFun,'p153')
         
     else
          error('DampedNewton: invalid input ObjFun');
-    end
-    
-    x(1) = x0 - (ObjFun(x0)/df(x0));
-    ex(1) = abs(x(1)-x0);
-    k = 2;
-    while (ex(k-1) >= tol) && (k <= nmax)
-        x(k) = x(k-1) - (ObjFun(x(k-1))/df(x(k-1)));
-        ex(k) = abs(x(k)-x(k-1));
-        k = k+1;
     end
 
 end
