@@ -37,7 +37,7 @@ function [x1,k,data] = DFPNewton(ObjFun,x0,tol,maxiter)
             end
         end            
     elseif strcmp(ObjFun,'Chebyquad')
-        
+        func = @(x,i)  
         
     elseif strcmp(ObjFun,'p153')
         
