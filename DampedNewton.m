@@ -1,4 +1,4 @@
-function [ x, ex ] =  DampedNewton( ObjFun,x0,Step,maxiter,RuleMin,varargin)
+function [ x, ex ] =  DampedNewton( ObjFun,x0,tol,maxiter,varargin)
 %
 % NEWTON Newton's Method
 %   Newton's method for finding successively better approximations to the 
@@ -11,7 +11,7 @@ function [ x, ex ] =  DampedNewton( ObjFun,x0,Step,maxiter,RuleMin,varargin)
 %   nmax - maximum number of iterations
 %
 % Output:
-%   x - aproximation to root
+%   x - aproximation to rootz
 %   ex - error estimate
 %
 % Example:
@@ -20,45 +20,47 @@ function [ x, ex ] =  DampedNewton( ObjFun,x0,Step,maxiter,RuleMin,varargin)
 % Version:  2017.4.10
 % Create:   2017.4.10
 % Coder:    Chujing Tan
-
-    if isempty(Step)
-        Step = zeros(size(x0));
+    if nargin==2
+        tol=1e-8;
+        maxiter = 200;
+    elseif nargin==3
+        maxiter = 200;
+    elseif nargin<2 || nargin>4
+        err('error input');
     end
+    
     [n,t] = size(x0);
-    k=0;
-    syms x;
-    x = x0;
-    if strcmp(ObjFun,'Penalty')
+    x = sym('x',[n,1]);
+    if strcmp(ObjFun,'Penalty')  
         gamma = 10^-5;
-        func = @(x,gamma) gamma*sum((x-1)^2)+(sum(x.*x)-1/4)^2;
-        g = gPenalty(x, gamma);
-        while norm(g)>=RuleMin
-            f = func(x,gamma);
-            G = ggPenalty(x,gamma);
-            d = -g\G;
-            x = x+alaph*d;%线搜索准则
-            %此处输出k/x/f/g 确定一个好看的格式
-            perStepPrinf(k,x,f,g);
-            k=k+1;
-            if k >maxiter
-                info('k>MaxxIter');
-                break
-            end
-            g = gPenalty(x, gamma);
-        end            
+        func = getPenalty(n,gamma);    
     elseif strcmp(ObjFun,'Chebyquad')
-        j=1; %x的下标
-        f =0;
-        while j<=n         
-            f = f + ChebyshevX(j,x,
-        end
-        
-        
-    elseif strcmp(ObjFun,'p153')
-        
+         func = getChebyquad(gamma);
+    elseif  strcmp(ObjFun,'p153')
+        func = getP153(gamma);
     else
          error('DampedNewton: invalid input ObjFun');
     end
+    
+    k=1;
+    x1 = x0;  
+    g = jacobian(func);
+    g0 = (eval(subs(g,x,x1)))'
+    G = hessian(func);
+    while norm(g0)>=tol
+        f = eval(subs(func,x,x1));
+        G0 = eval(subs(G,x,x1))
+        d = -g0\G0;
+        alaph =1;
+        x1 = x1+alaph*d';%线搜索准则
+        k=k+1;
+        if k >maxiter
+            info('k>MaxxIter');
+            break
+        end
+        g0 = (eval(subs(g,x,x1)))';
+    end            
+
 
 end
 

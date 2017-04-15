@@ -1,10 +1,16 @@
-function [x,ex] = MixNewton(ObjFun,Point,Step.MaxIter,RuleMin,varargin)
+function [x,ex] = MixNewton(ObjFun,x0,tol,maxiter,varargin)
 
-    if isempty(Step)
-        Step = zeros(size(Point));
+
+    if nargin==2
+        tol=1e-8;
+        maxiter = 200;
+    elseif nargin==3
+        maxiter = 200;
+    elseif nargin<2 || nargin>4
+        err('error input');
     end
-    
-    k=0;
+  
+    k=1;
     x= Point;
     epslon1=
     epslon2=
@@ -26,8 +32,6 @@ function [x,ex] = MixNewton(ObjFun,Point,Step.MaxIter,RuleMin,varargin)
                 end
             end
           
-            %此处输出k/x/f/g 确定一个好看的格式
-            perStepPrinf(k,x,f,g);
             %为下一步迭代做准备
             alaph = linesearch(); %线搜索准则求alaph
             x = x+alaph*d; 

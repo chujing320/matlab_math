@@ -1,10 +1,9 @@
-function [funstr] = getChebyquad(m,n)
-%求切比雪夫目标函数
-j=1;
-fstr = '';
-while j<=m
-    cheby1 = getChebyploy(i,j);
-    cheby2 = getChebyploy(i);
-    fstr = strcat(fstr,cheaby1,'/n-int(',cheby2,'0,1)');
-    j = j+1;
+function func=getChebyquad(x_k)
+    func=0;
+    [n,t] = size(x_k);
+    for i = 1:n
+        a_i = ChebyshevPoly(i);
+        r_i = sum(polyval(a_i,x_k))/n - integral(@(x)polyval(a_i,x),0,1);
+        func = func +r_i.^2;
+    end
 end
