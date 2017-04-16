@@ -69,7 +69,7 @@ function [StepSize info perf] = ...
 error(nargchk(3, inf, nargin, 'struct'));
 error(nargoutchk(0, 3, nargout, 'struct'));
 if nargin == 3 || isempty(Rule)
-    Rule.opt = 1;
+    Rule.opt = 1; 
 end
 if ~Rule.opt(1)
     Rule.opt = bodfltchk(Rule.opt, [0 10 25 1e-4]);

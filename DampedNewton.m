@@ -1,4 +1,4 @@
-function [ x, ex ] =  DampedNewton( ObjFun,x0,tol,maxiter,varargin)
+function [data_f,data_g, k, feva ] =  DampedNewton( ObjFun,x0,tol,maxiter,varargin)
 %
 % NEWTON Newton's Method
 %   Newton's method for finding successively better approximations to the 
@@ -31,35 +31,81 @@ function [ x, ex ] =  DampedNewton( ObjFun,x0,tol,maxiter,varargin)
     
     [n,t] = size(x0);
     x = sym('x',[n,1]);
+    k=1;
+    feva =0;
     if strcmp(ObjFun,'Penalty')  
         gamma = 10^-5;
-        func = getPenalty(n,gamma);    
+        func = getPenalty(n,gamma);   
+        g = jacobian(func);
+        g0 = (eval(subs(g,x,x0)))';
+        feva = feva+1;
+        G = hessian(func);
+        while norm(g0)>=tol
+            f = eval(subs(func,x,x0));
+            feva = feva+1;
+            data_f(:,k) = f;
+            data_g (:,k) = g0;
+            G0 = eval(subs(G,x,x0));
+            feva = feva+1;
+            d = -G0^-1 * g0;
+            alaph =1;
+            x0 = x0+alaph*d;%线搜索准则
+            k=k+1;
+            if k >maxiter
+                info('k>MaxxIter');
+                break
+            end
+            g0 = (eval(subs(g,x,x0)))';
+            feva = feva+1;
+        end          
     elseif strcmp(ObjFun,'Chebyquad')
-         func = getChebyquad(gamma);
-    elseif  strcmp(ObjFun,'p153')
-        func = getP153(gamma);
+         g0 = gChebyquad(x0);
+         feva = feva+1;
+         while norm(g0)>=tol
+             f = getChebyquad(x0);
+             feva = feva+1;
+             data_f(:,k)=f;
+             data_g(:,k)=g0;
+             G0=ggChebyquad(x0);
+             feva = feva+1;
+             d = -G0^-1 * g0;
+             alaph = 1;
+             x0 = x0+alaph*d;%线搜索准则
+             k=k+1;
+            if k >maxiter
+                info('k>MaxxIter');
+                break
+            end
+            g0 = gChebyquad(x0);
+            feva = feva+1;
+         end
+             
+    elseif  strcmp(ObjFun,'P153')
+         g0 = gP153(x0);
+         feva = feva+1;
+         while norm(g0)>=tol
+             f = getP153(x0);
+             feva = feva+1;
+             data_f(:,k)=f;
+             data_g(:,k)=g0;
+             G0=ggP153(x0);
+             feva = feva+1;
+             d = -G0^-1 * g0;
+             alaph = 1;
+             x0 = x0+alaph*d;%线搜索准则
+             k=k+1;
+            if k >maxiter
+                info('k>MaxxIter');
+                break
+            end
+            g0 = gP153(x0);
+            feva = feva+1;
+         end
     else
          error('DampedNewton: invalid input ObjFun');
     end
-    
-    k=1;
-    x1 = x0;  
-    g = jacobian(func);
-    g0 = (eval(subs(g,x,x1)))'
-    G = hessian(func);
-    while norm(g0)>=tol
-        f = eval(subs(func,x,x1));
-        G0 = eval(subs(G,x,x1))
-        d = -g0\G0;
-        alaph =1;
-        x1 = x1+alaph*d';%线搜索准则
-        k=k+1;
-        if k >maxiter
-            info('k>MaxxIter');
-            break
-        end
-        g0 = (eval(subs(g,x,x1)))';
-    end            
+     
+   
 
 
 end
