@@ -1,6 +1,6 @@
-function [data_f,data_g, x0, feva ] =  DampedNewton( ObjFun,x0,tol,maxiter, varargin)
+function [data_f,data_g, x0 ,feva ] = BFGSNewton(ObjFun,x0,tol,maxiter)
 %
-% DampedNewton Newton's Method
+% BFGSNewton Newton's Method
 %
 % Input:
 %   ObjFun - input funtion ,choice :Penalty | Chebyquad | p153
@@ -19,6 +19,7 @@ function [data_f,data_g, x0, feva ] =  DampedNewton( ObjFun,x0,tol,maxiter, vara
 % Version:  2017.4.10
 % Create:   2017.4.10
 % Coder:    Chujing Tan
+
     if nargin==2
         tol=1e-8;
         maxiter = 200;
@@ -31,30 +32,36 @@ function [data_f,data_g, x0, feva ] =  DampedNewton( ObjFun,x0,tol,maxiter, vara
     Rule.crtr='bostwlf';
     Rule.mthd = 'bointrplt33';
     Rule.opt=[1 20 10 0.95 0.05];
-
-    [n,t] = size(x0);
+    
     k=1;
-    [f0 g0 G0]=feval(ObjFun, x0, varargin{:});
-    feva =3;
+    x1=x0;
+    [n,t] = size(x0);
+    [f0 g0]=feval(ObjFun, x0, 2);
+    feva = 2;
+    H0 = ones(n,n);
+    H1 = H0;        
     while norm(g0)>=tol
+        %data 用来存放中间数据
         data_f(:,k) = f0;
         data_g (:,k) = g0;
-        d = -G0^-1 * g0;
+        %开始迭代
+        d = -H0*g0;
         [alaph,info1] = bolinesearch(ObjFun, x0, d, Rule);
-        if info1(1) == 1%若没有找到满足准则的步长，则用默认步长为1的牛顿法
-           alaph = 1;
-        end
-        feva = feva+1;
-        x0 = x0+alaph*d;%线搜索准则
-        k=k+1;
-        if k >maxiter
-            info('k>MaxxIter');
+        x1 = x0+alaph*d;%线搜索准则
+        [f0 g0]=feval(ObjFun, x1, 2);
+        feva = feva+2;
+        %修正公式
+        s = x1-x0;
+        y = g1-g0;
+        H1 = H0+(1+(y'*H0*y)/(y'*s))*((s*s')/(y'*s))-((s*y'*H0+H0*y*s')/(y'*s));
+        x0 = x1;
+        g0 = g1;
+        H0 = H1;
+        k=k+1; 
+        if k > maxiter
+            info('k>maxiter');
             break
         end
-        [f0,g0,G0]=feval(ObjFun, x0);
-        feva = feva+3;
-     end         
-
+    end            
+   
 end
-
-
