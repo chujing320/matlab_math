@@ -1,4 +1,4 @@
-function [data_f,data_g, x0,feva] = SR1Newton(ObjFun,x0,tol,maxiter)
+function [data_f,data_g, x0,feva, g0] = SR1Newton(ObjFun,x0,tol,maxiter)
 
 %SR1Newton Newton's Method
 %
@@ -56,7 +56,7 @@ function [data_f,data_g, x0,feva] = SR1Newton(ObjFun,x0,tol,maxiter)
         %ÐÞÕý¹«Ê½
         s = x1-x0;
         y = g1-g0;
-        H1 = H0+((s-H0*y)*(s-H0*y)')/((s-H0*y)'*y+10^(-19));
+        H1 = H0+((s-H0*y)*(s-H0*y)')/((s-H0*y)'*y+10^(-20));
         x0 = x1;
         g0 = g1;
         H0 = H1;
@@ -66,4 +66,5 @@ function [data_f,data_g, x0,feva] = SR1Newton(ObjFun,x0,tol,maxiter)
             break
         end
     end    
+   
 end

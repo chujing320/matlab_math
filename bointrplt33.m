@@ -45,7 +45,7 @@ a1 = StepSize(1);
 ff = 0;
 if a0 ~= 0 && a1 ~= 0 && a1 ~= a0
     p = [a0^2 -a1^2; -a0^3 a1^3] * [Qa1-Q-Qp*a1; Qa0-Q-Qp*a0] ...
-        / ( a0^2 * a1^2 *(a1-a0) );
+        / (( a0^2 * a1^2 *(a1-a0)+10^-30)+10^-12);
     p = roots([p.*[3; 2]; Qp]);
     if isreal(p)
         p = max(p);

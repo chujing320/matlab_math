@@ -49,10 +49,10 @@ function [data_f,data_g,x0,feva] = MixNewton(ObjFun,x0,tol,maxiter,epslon1,epslo
         f0 =f1;
         data_f(:,k) = f0;
         data_g (:,k) = g0;
-        if abs(det(G0))<10^-20 %ÊÇÆæÒì¾ØÕó
+        if abs(det(G0))<10^(-20) %ÊÇÆæÒì¾ØÕó
             d=-g0;                  
         else %G0ÊÇ·ÇÆæÒì¾ØÕó
-            d = -G0^-1 * g0;
+            d = -G0^-1 * g0+10^-20;
             if g0'*d >norm(g0)*norm(d)*epslon1
                 d = -d;
             elseif abs(g0'*d)<=norm(g0)*norm(d)*epslon2
