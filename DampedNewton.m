@@ -21,9 +21,9 @@ function [data_f,data_g, x0, feva ] =  DampedNewton( ObjFun,x0,tol,maxiter, vara
 % Coder:    Chujing Tan
     if nargin==2
         tol=1e-8;
-        maxiter = 200;
+        maxiter = 10000;
     elseif nargin==3
-        maxiter = 200;
+        maxiter = 10000;
     elseif nargin<2 || nargin>4
         err('error input');
     end

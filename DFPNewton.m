@@ -1,10 +1,29 @@
 function [data_f,data_g, x0, feva] = DFPNewton(ObjFun,x0,tol,maxiter)
+% DFPNewton Newton's Method
+%
+% Input:
+%   ObjFun - input funtion ,choice :Penalty | Chebyquad | p153
+%   x0 - x in P, n-vector
+%   tol: 允许的最大误差值
+%   maxiter - maximum number of iterations
+%
+% Output:
+% data_f:存储每一步迭代的f值
+% daga_g:存储每一步跌倒的g值
+% x0 :求得最优解的x值
+% feva:函数调用次数
+% Example:
+%	[ x, ex ] = DFPNewton( 'Penalty', [1,1,1,1]' )
+%
+% Version:  2017.4.10
+% Create:   2017.4.10
+% Coder:    Chujing Tan
 
      if nargin==2
         tol=1e-8;
-        maxiter = 200;
+        maxiter = 10000;
     elseif nargin==3
-        maxiter = 200;
+        maxiter = 10000;
     elseif nargin<2 || nargin>4
         err('error input');
      end
@@ -19,20 +38,23 @@ function [data_f,data_g, x0, feva] = DFPNewton(ObjFun,x0,tol,maxiter)
     H0 = ones(n,n);
     H1 = H0;
     [f0 g0]=feval(ObjFun, x0, 2); %传入返回值个数2
-    feva = feva+2;
+    feva = 2;
     while norm(g0)>=tol
         data_f(:,k) = f0;
         data_g (:,k) = g0;
         %开始迭代
         d = -H0*g0;
         [alaph,info1] = bolinesearch(ObjFun, x0, d, Rule);
+        if info1(1) == 1%若没有找到满足准则的步长，则用默认步长为1的牛顿法
+            StepSize = 1;
+        end
         x1 = x0+alaph*d;%线搜索准则
-        [f0 g0]=feval(ObjFun, x1, 2);
+        [f0 g1]=feval(ObjFun, x1, 2);
         feva = feva+3;
         %修正公式
         s = x1-x0;
         y = g1-g0;
-        H1 = H0+(s*s')/(s'*y)-(H0*y*y'*H0)/(y'*H0*y);
+        H1 = H0+(s*s')/(s'*y+10^(-19))-(H0*y*y'*H0)/(y'*H0*y+10^(-19));
         x0 = x1;
         g0 = g1;
         H0 = H1;

@@ -2,6 +2,7 @@ function G = ggPenalty(Point,gamma)
 %求Penalty检验函数的二阶导G
 %Point为n*1的x矩阵
 %G为n*n的矩阵
+gamma = 10^-5;
 [n,t] = size(Point);
 if n==0 && n==0
     error('error input Point');
