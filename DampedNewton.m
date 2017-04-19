@@ -21,9 +21,9 @@ function [data_f,data_g, x0, feva ] =  DampedNewton( ObjFun,x0,tol,maxiter, vara
 % Coder:    Chujing Tan
     if nargin==2
         tol=1e-8;
-        maxiter = 10000;
+        maxiter = 5000;
     elseif nargin==3
-        maxiter = 10000;
+        maxiter = 5000;
     elseif nargin<2 || nargin>4
         err('error input');
     end
@@ -39,7 +39,8 @@ function [data_f,data_g, x0, feva ] =  DampedNewton( ObjFun,x0,tol,maxiter, vara
     while norm(g0)>=tol
         data_f(:,k) = f0;
         data_g (:,k) = g0;
-        d = -G0^-1 * g0;
+        %d = -G0^-1 * g0;
+        d = -G0\(g0+10^-20);
         [alaph,info1] = bolinesearch(ObjFun, x0, d, Rule);
         if info1(1) == 1%若没有找到满足准则的步长，则用默认步长为1的牛顿法
            alaph = 1;

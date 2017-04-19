@@ -21,9 +21,9 @@ function [data_f,data_g, x0, feva] = DFPNewton(ObjFun,x0,tol,maxiter)
 
      if nargin==2
         tol=1e-8;
-        maxiter = 2000;
+        maxiter = 200;
     elseif nargin==3
-        maxiter = 2000;
+        maxiter = 200;
     elseif nargin<2 || nargin>4
         err('error input');
      end
@@ -48,13 +48,16 @@ function [data_f,data_g, x0, feva] = DFPNewton(ObjFun,x0,tol,maxiter)
         if info1(1) == 1%若没有找到满足准则的步长，则用默认步长为1的牛顿法
             StepSize = 1;
         end
+        f0
+        x0
+        g0
         x1 = x0+alaph*d;%线搜索准则
         [f0 g1]=feval(ObjFun, x1, 2);
         feva = feva+3;
         %修正公式
         s = x1-x0;
         y = g1-g0;
-        H1 = H0+(s*s')/(s'*y+10^(-20))-(H0*y*y'*H0)/(y'*H0*y+10^(-19));
+        H1 = H0+(s*s')/(s'*y+10^(-20))-(H0*y*y'*H0)/(y'*H0*y+10^(-20));
         x0 = x1;
         g0 = g1;
         H0 = H1;

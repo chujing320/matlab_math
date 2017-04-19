@@ -40,17 +40,20 @@ function [data_f,data_g, x0,feva, g0] = SR1Newton(ObjFun,x0,tol,maxiter)
     H1 = H0;
     [f0 g0]=feval(ObjFun, x0, 2);
     feva = 2;
-    while norm(g0)>=tol
+    f1 =1 ;
+  %  while norm(g0)>=tol
+  while abs(f1-f0)>=tol
         %data 用来存放中间数据
         data_f(:,k) = f0;
         data_g (:,k) = g0;
         %开始迭代
         d = -H0*g0; 
-        [alaph,info1] = bolinesearch(ObjFun, x0, d, Rule);
+        
+        [alpha,info1] = bolinesearch(ObjFun, x0, d, Rule);
         if info1(1) == 1%若没有找到满足准则的步长，则用默认步长为1的牛顿法
-            StepSize = 1;
+            alpha = 1;
         end
-        x1 = x0+alaph*d;%线搜索准则
+        x1 = x0+alpha*d;%线搜索准则
         [f0 g1]=feval(ObjFun, x1, 2);%传入返回值个数2
         feva = feva+2;
         %修正公式

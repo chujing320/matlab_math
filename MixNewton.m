@@ -22,7 +22,7 @@ function [data_f,data_g,x0,feva] = MixNewton(ObjFun,x0,tol,maxiter,epslon1,epslo
 
     if nargin==2
         tol=1e-8;
-        maxiter =  500;
+        maxiter =  2000;
         epslon1 = 10^-8;
         epslon2 = 10^-8;
     elseif nargin==3
