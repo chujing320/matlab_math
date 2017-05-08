@@ -36,6 +36,7 @@ function [data_f,data_g, x0 ,feva ] = BFGSNewton(ObjFun,x0,tol,maxiter)
     k=1;
     x1=x0;
     [n,t] = size(x0);
+    print x0
     [f0 g0]=feval(ObjFun, x0, 2);
     feva = 2;
     H0 = ones(n,n);

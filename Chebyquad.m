@@ -4,7 +4,7 @@ function[f0,g0,G0] = Chebyquad(x0,returnnum)
     end
     f0 = getChebyquad(x0);
     g0 = gChebyquad(x0);
-  if returnnum ==2 
+  if returnnum == 2 
         G0=0;
         return ;
     end

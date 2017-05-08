@@ -1,4 +1,4 @@
-function[f0,g0,G0] = Penalty(x0,returnnum)
+function [f0,g0,G0] = Penalty(x0,returnnum)
     if  nargin==1
         returnnum = 3;
     end
