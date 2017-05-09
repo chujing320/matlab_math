@@ -2,9 +2,9 @@ function [data_f, data_g, x0, feva] = FR(ObjFun, x0, tol, maxiter)
 
     if nargin==2
         tol=1e-8;
-        maxiter = 200;
+        maxiter = 2000;
     elseif nargin==3
-        maxiter = 200;
+        maxiter = 2000;
     elseif nargin<2 || nargin>4
         err('error input');
     end
@@ -13,7 +13,7 @@ function [data_f, data_g, x0, feva] = FR(ObjFun, x0, tol, maxiter)
     [n,t] = size(x0);
     [f0, g0] = feval(ObjFun, x0, 2);
     feva = feva + 2;
-     dk = -g0;
+    dk = -g0;
     while norm(g0)>=tol
         data_f(:,k) = f0;
         daga_g(:,k) = g0;

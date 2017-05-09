@@ -12,7 +12,7 @@ function [data_f, data_g, x0, feva] = BB(ObjFun, x0, tol, maxiter)
     feva = 0;beta = 0; k = 1; x1 = x0;
     [n,t] = size(x0);
     [f0, g0] = feval(ObjFun, x0, 2);
-    feva = feva + 1;
+    feva = feva + 2;
     alaph = xxxxxxxxxxxx;
     x1 = x0 - alaph*g0;
     data_f(:,k) = f0;
@@ -20,7 +20,7 @@ function [data_f, data_g, x0, feva] = BB(ObjFun, x0, tol, maxiter)
     k = 2;
     while norm(g0)>=tol
         [f1, g1] = feval(ObjFun, x1, 2);
-        feva = feva + 1;
+        feva = feva + 2;
         data_f(:,k) = f1;
         daga_g(:,k) = g1;
         sk = x1-x0; yk = g1-g0;
