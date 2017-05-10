@@ -1,4 +1,4 @@
-function [data_f, data_g, x0, feva] = FR(ObjFun, x0, tol, maxiter)
+function [data_f, data_g, x0, k, feva] = FR(ObjFun, x0, tol, maxiter)
 
     if nargin==2
         tol=1e-8;
@@ -14,10 +14,12 @@ function [data_f, data_g, x0, feva] = FR(ObjFun, x0, tol, maxiter)
     [f0, g0] = feval(ObjFun, x0, 2);
     feva = feva + 2;
     dk = -g0;
+    data_f = 0;
+    data_g = 0;
     while norm(g0)>=tol
         data_f(:,k) = f0;
         daga_g(:,k) = g0;
-        [alaph, feva] = mybostwolf(ObjFun, x0, dk ,feva)
+        [alaph, feva] = mybostwolf(ObjFun, x0, dk ,feva, f0,g0);
         x1 = x0 + alaph*dk;
         [f1, g1] = feval(ObjFun, x1, 2);
         feva = feva + 2;
@@ -30,7 +32,7 @@ function [data_f, data_g, x0, feva] = FR(ObjFun, x0, tol, maxiter)
             break
         end
     end
-    if feva == 2s
+    if feva == 2
         data_f = 0;
         data_g = 0;
         info('iter = 0');

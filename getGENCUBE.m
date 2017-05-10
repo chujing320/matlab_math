@@ -4,7 +4,7 @@ function fk = getGENCUBE(xk)
     for i = 2:n
         fk = fk+(xk(i)-xk(i-1)^3)^2;
     end
-    fk = fk + (xk(1) -  1)^2;
+    fk = 100*fk + (xk(1) -  1)^2;
 end
     
 

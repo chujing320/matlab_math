@@ -1,4 +1,4 @@
-function [data_f, data_g, x0, feva] = CG1(ObjFun, x0, tol, maxiter)
+function [data_f, data_g, x1, k, feva] = CG1(ObjFun, x0, tol, maxiter)
 
     if nargin==2
         tol=1e-8;
@@ -9,15 +9,16 @@ function [data_f, data_g, x0, feva] = CG1(ObjFun, x0, tol, maxiter)
         err('error input');
     end
     
-    rho = 0.55; sigma = 0.4; k = 1;
+    rho = 0.4; sigma = 0.45; k = 1;
     [n,t] = size(x0);
+    x1 = x0;
     g0 = ones(n,t); % 初始化g0为1矩阵
     dk = zeros(n,t); % 初始化dk为0矩阵
-    [f1,g1] = feval(ObjFun, x0, 2);
+    [f1,g1] = feval(ObjFun, x1, 2);
     while norm(g1)>=tol
         feva = feva+2;
         data_f(:,k) = f1;
-        daga_g(:,k) = g1;
+        data_g(:,k) = g1;
         a = g1'*g1/(g0'*g0); %FR方法系数
         b = g1'*(g1-g0)/(g1'*g1); %PRP方法系数
         if b>a
@@ -33,22 +34,14 @@ function [data_f, data_g, x0, feva] = CG1(ObjFun, x0, tol, maxiter)
             dk = -g1+beta*dk; 
         end
         
-        f0 = f1; g0 = g1; m = 0; mk = 0;
-        while m<20
-            f1 = feval(ObjFun,x0+rho^m*g1'*dk);
-            if f1<f0+sigma*rho^m*g1'*dk
-                mk = m;
-                break;
-            end
-            m = m+1;
-            feva = feva+1;
-        end
-        x0 = x0+rho^mk*dk;
+        f0 = f1; g0 = g1;
+        [alpha,feva] = mybostwolf(ObjFun,x1,dk,feva,f0,rho,sigma);
+        x1 = x1+alpha*dk;
         k = k+1;
         if k > maxiter
             info('k>maxiter');
             break
         end
-        [f1,g1] = feval(ObjFun, x0, 2);
+        [f1,g1] = feval(ObjFun, x1, 2);
     end
 end
