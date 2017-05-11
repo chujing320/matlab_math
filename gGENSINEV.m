@@ -1,6 +1,6 @@
-function g = gGENSINEV(x0)
+function g = gGENSINEV(x)
     c1 = 10^(-4); c2 = 4;
-    [n,t] = size(x0);
+    [n,t] = size(x);
     g = zeros(n,t);
     g(1) = -2/c1*(x(2)-sin(x(1)))*cos(x(1)) + 2/c2*x(1);
     for i=2:n-1

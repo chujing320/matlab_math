@@ -1,5 +1,5 @@
-function [f,g] = getS303(x0,returnnum)
-    [n,t] = size(x0);
+function [f,g] = getS303(x,returnnum)
+    [n,t] = size(x);
     f = 0;
     f1 = 0;
     for i=1:n

@@ -1,4 +1,4 @@
-function [data_f, data_g, x0, k, feva] = PRP(ObjFun, x0, tol, maxiter)
+function [data_f, data_g, x1, k, feva] = PRP(ObjFun, x0, tol, maxiter)
 
     if nargin==2
         tol=1e-8;

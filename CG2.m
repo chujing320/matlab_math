@@ -1,4 +1,4 @@
-function [data_f, data_g, x0, k, feva] = CG2(ObjFun, x0, tol, maxiter)
+function [data_f, data_g, x1, k, feva] = CG2(ObjFun, x0, tol, maxiter)
 
     if nargin==2
         tol=1e-8;
@@ -9,9 +9,9 @@ function [data_f, data_g, x0, k, feva] = CG2(ObjFun, x0, tol, maxiter)
         err('error input');
     end
     
-    rho = 0.4; sigma = 0.45; k = 1;
+    rho = 0.18; sigma = 0.68; k = 1;
     [n,t] = size(x0);
-    x1 = x0;
+    x1 = x0; feva =0;
     g0 = ones(n,t); % 初始化g0为1矩阵
     dk = zeros(n,t); % 初始化dk为0矩阵
     [f1,g1] = feval(ObjFun, x1, 2);
@@ -21,13 +21,13 @@ function [data_f, data_g, x0, k, feva] = CG2(ObjFun, x0, tol, maxiter)
         data_g(:,k) = g1;
         a = g1'*g1/(g0'*g0); %FR方法系数
         b = g1'*(g1-g0)/(g1'*g1); %PRP方法系数
-        if mod(k-1,50)==0 %从第0次开始算 n步重新开始准则
-            dk = -g1;
-        else
+    %    if mod(k-1,50)==0 %从第0次开始算 n步重新开始准则
+     %       dk = -g1;
+     %   else
             dk = -g1+max(0,min(a,b))*dk;
-        end  
+      %  end  
         f0 = f1; g0 = g1; 
-        [alpha,feva] = mybostwolf(ObjFun,x1,dk,feva,f0,rho,sigma);
+        [alpha,feva] = mybostwolf(ObjFun,x1,dk,feva,f0,g0,sigma,rho);
         x1 = x1+alpha*dk;
         k = k+1;
         if k > maxiter
