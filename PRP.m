@@ -1,7 +1,7 @@
 function [data_f, data_g, x1, k, feva] = PRP(ObjFun, x0, tol, maxiter)
 
     if nargin==2
-        tol=1e-8;
+        tol=1e-20;
         maxiter = 2000;
     elseif nargin==3
         maxiter = 2000;
@@ -9,19 +9,24 @@ function [data_f, data_g, x1, k, feva] = PRP(ObjFun, x0, tol, maxiter)
         err('error input');
     end
     
-    feva = 0;beta = 0; k = 1; x1 = x0;
-    [f0, g0] = feval(ObjFun, x0, 2);
-    dk = -g0;
-    while norm(g0)>=tol
+    feva = 0;beta = 0; k = 1; x1 = x0;f0=0;
+    rho = 0.08; sigma = 0.08;
+    [f1, g1] = feval(ObjFun, x0, 2);
+ %   while norm(g1)>=tol
+    while abs(f1-f0)>=tol
         feva = feva + 2;
-        data_f(:,k) = f0;
-        data_g(:,k) = g0;
-        [alpha, feva] = mybostwolf(ObjFun, x0, dk ,feva, f0, g0, 0.55, 0.4);
+        data_f(:,k) = f1;
+        data_g(:,k) = g1;
+        f0 = f1;g0=g1;x0=x1;
+        if mod(k-1,50)==0 %从第0次开始算
+            dk = -g1;
+        else
+            dk = -g1+beta*dk; 
+        end
+        [alpha, feva] = mybostwolf(ObjFun, x0, dk ,feva, f0, g0, sigma,rho);
         x1 = x0 + alpha*dk;
         [f1, g1] = feval(ObjFun, x1, 2);
         beta = (g1'*(g1-g0))/(g0'*g0);
-        dk = -g1 + beta*dk;
-        x0 = x1;f0 = f1;g0 = g1;
         k = k+1;
         if k > maxiter
             info('k>maxiter');

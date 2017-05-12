@@ -4,7 +4,7 @@ if nargin==6 %设置默认值
     beta = 0.55; rho = 0.4;
 end 
 m = 0; mk = 0;
-while m<30 %amijo准则
+while m<50 %amijo准则
  xk = x0+beta^m*dk;
  f1 = feval(ObjFun,xk,1);
     if (f1<f0+rho*beta^m*g0'*dk) %&& (abs(g0'*dk) <= -rho*g0'*dk) %armijo & wolf
@@ -18,5 +18,5 @@ end
 %     mk =1;
 % end
 mk;
-alpha = beta^mk; %如果找不到合适的步长 则mk=0，即alpha=1
+alpha = max(beta^mk,10^-15) %如果找不到合适的步长 则mk=0，即alpha=1
 end
